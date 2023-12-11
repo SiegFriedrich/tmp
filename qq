@@ -1,0 +1,24 @@
+C:\inetpub\wwwroot>dotnet --info
+
+global.json file:
+  Not found
+
+Host:
+  Version:      6.0.24
+  Architecture: x64
+  Commit:       e7b8488daf
+
+.NET SDKs installed:
+  No SDKs were found.
+
+.NET runtimes installed:
+  Microsoft.AspNetCore.App 6.0.24 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+  Microsoft.NETCore.App 6.0.24 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+
+Download .NET:
+  https://aka.ms/dotnet-download
+
+Learn about .NET Runtimes and SDKs:
+  https://aka.ms/dotnet/runtimes-sdk-info
+
+C:\inetpub\wwwroot>
