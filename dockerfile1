@@ -1,0 +1,10 @@
+FROM mcr.microsoft.com/windows/servercore/iis:windowsservercore-ltsc2019
+WORKDIR "C:\inetpub\wwwroot"
+COPY "sample" "C:\inetpub\wwwroot\sample"
+COPY "dotnet-hosting-6.0.24-win.exe" "C:\dotnet-hosting-6.0.24-win.exe"
+RUN C:\dotnet-hosting-6.0.24-win.exe /install /quiet /norestart \
+    & setx /m PATH "%PATH%;C:\Windows\System32\inetsrv" \
+    & setx /m PATH "%PATH%;C:\Program Files\dotnet" \
+    & C:\Windows\System32\inetsrv\appcmd add site /name:Web /bindings:"http/*:8080:" /physicalPath:"C:\inetpub\wwwroot\sample" \
+    & del C:\dotnet-hosting-6.0.24-win.exe
+ENTRYPOINT ["C:\\ServiceMonitor.exe", "w3svc"]
