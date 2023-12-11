@@ -1,29 +1,27 @@
 C:\inetpub\wwwroot>dotnet --info
 
 global.json file:
-  Not found
+Not found
 
 Host:
-  Version:      6.0.24
-  Architecture: x64
-  Commit:       e7b8488daf
+Version: 6.0.24
+Architecture: x64
+Commit: e7b8488daf
 
 .NET SDKs installed:
-  No SDKs were found.
+No SDKs were found.
 
 .NET runtimes installed:
-  Microsoft.AspNetCore.App 6.0.24 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
-  Microsoft.NETCore.App 6.0.24 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+Microsoft.AspNetCore.App 6.0.24 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+Microsoft.NETCore.App 6.0.24 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
 
 Download .NET:
-  https://aka.ms/dotnet-download
+https://aka.ms/dotnet-download
 
 Learn about .NET Runtimes and SDKs:
-  https://aka.ms/dotnet/runtimes-sdk-info
+https://aka.ms/dotnet/runtimes-sdk-info
 
-C:\inetpub\wwwroot>
----------------
-
+## C:\inetpub\wwwroot>
 
 C:\inetpub\wwwroot\sample>dotnet TokenSample.dll
 You must install or update .NET to run this application.
@@ -34,18 +32,18 @@ Framework: 'Microsoft.NETCore.App', version '8.0.0' (x64)
 .NET location: C:\Program Files\dotnet\
 
 The following frameworks were found:
-  6.0.24 at [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+6.0.24 at [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
 
 Learn about framework resolution:
 https://aka.ms/dotnet/app-launch-failed
 
 To install missing framework, download:
 https://aka.ms/dotnet-core-applaunch?framework=Microsoft.NETCore.App&framework_version=8.0.0&arch=x64&rid=win10-x64
- private string GenerateJwtToken(User user)
-        {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var TIME_SPAN = 24;
+private string GenerateJwtToken(User user)
+{
+var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(\_configuration["Jwt:Key"]));
+var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+var TIME_SPAN = 24;
 
             var claims = new[]
             {
@@ -64,3 +62,39 @@ https://aka.ms/dotnet-core-applaunch?framework=Microsoft.NETCore.App&framework_v
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+
+
+
+        ---------------------
+
+
+        var builder = WebApplication.CreateBuilder(args);
+
+// 添加认证服务并配置 JWT Bearer
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+.AddJwtBearer(options =>
+{
+options.TokenValidationParameters = new TokenValidationParameters
+{
+ValidateIssuerSigningKey = true,
+IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+ValidateIssuer = true,
+ValidIssuer = builder.Configuration["Jwt:Issuer"],
+ValidateAudience = true,
+ValidAudience = builder.Configuration["Jwt:Audience"],
+ValidateLifetime = true
+};
+});
+
+builder.Services.AddControllers();
+
+var app = builder.Build();
+
+// 使用认证中间件
+app.UseAuthentication();
+app.UseAuthorization();
+
+// ... 其他配置
+
+app.Run();
