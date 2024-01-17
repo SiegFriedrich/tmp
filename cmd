@@ -37,3 +37,50 @@ The type or namespace name 'VisualStudio' does not exist in the namespace 'Micro
 ========== ビルド: 成功 0、失敗 1、最新の状態 0、スキップ 0 ==========
 
 The type or namespace name 'VisualStudio' does not exist in the namespace 'Microsoft' (are you missing an assembly reference?)
+
+
+
+using System.Net;
+using System.Net.Http;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace Test.CsrfControllerTests;
+
+[TestClass]
+public class CsrfControllerTests
+{
+    private readonly HttpClient _client;
+
+    public CsrfControllerTests()
+    {
+        _client = new HttpClient();
+        _client.BaseAddress = new System.Uri("http://localhost:8080");
+    }
+    [TestMethod]
+    public async Task TestCsrfTokenEndpoint()
+    {
+        //Postリクエスト
+        var request = new HttpRequestMessage(HttpMethod.Post, "/api/sys/csrf-token");
+        request.Headers.Add("Accept", "application/json");
+        request.Content = new StringContent("", System.Text.Encoding.UTF8, "application/json");
+
+        //Send the request
+        var response = await _client.SendAsync(request);
+
+        //レスポンスアサーション
+        Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+
+        //JSON Response 読み取り
+        var jsonContent = await response.Content.ReadAsStringAsync();
+        Assert.IsTrue(!string.IsNullOrWhiteSpace(jsonContent));
+
+        //レスポンスをオブジェクトにする
+        var csrfTokenResponse = JsonConverter.DeserializeObject<CsrfTokenResponse>(jsonContent);
+
+        //アサーション
+        AssertionRequirement.Equals("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOiIxNzA1NDc0OTY5Iiwic3ViIjoiQlYwMTgzMjAyIiwiZXhwIjoxNzA1NTYxMzY5LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjgwODAifQ.AMPAjhetXYMqaE2tRf7kmwBCt-_bgIb-AtGBW72uf9I", csrfTokenResponse.CsrfToken);
+    }
+}
