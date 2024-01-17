@@ -30,3 +30,5 @@ private string GenerateJwtToken()
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+The type or namespace name 'VisualStudio' does not exist in the namespace 'Microsoft' (are you missing an assembly reference?)
