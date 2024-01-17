@@ -32,3 +32,6 @@ private string GenerateJwtToken()
         }
 
 The type or namespace name 'VisualStudio' does not exist in the namespace 'Microsoft' (are you missing an assembly reference?)
+
+型または名前空間の名前 'AspNetCore' が名前空間 'Microsoft' に存在しません (アセンブリ参照があることを確認してください)
+========== ビルド: 成功 0、失敗 1、最新の状態 0、スキップ 0 ==========
