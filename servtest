@@ -193,3 +193,78 @@ C:\temp\tokensample\tokensample\commonapi.Tests\Tests\ServerReqResTest.cs(27,32)
 C:\temp\tokensample\tokensample\commonapi.Tests\Tests\ServerReqResTest.cs(34,34): error CS1729: 'SysServerController' には、引数 2 を指定するコン 
 ストラクターは含まれてい
 ません [C:\temp\tokensample\tokensample\commonapi.Tests\commonapi.Tests.csproj]
+
+
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using System.Collections.Generic;
+using System.Linq;
+using commonapi.Controllers;
+using commonapi.Models;
+using commonapi.Shared;
+
+namespace commonapi.Tests
+{
+    [TestClass]
+    public class SysServerControllerTests
+    {
+        [TestMethod]
+        public void PostApiControl_ValidOperation_ReturnsOk()
+        {
+            // 创建模拟的HttpContext
+            var httpContextMock = new Mock<HttpContext>();
+
+            // 创建模拟的ControllerContext，将HttpContext设置为模拟的HttpContext
+            var controllerContext = new ControllerContext
+            {
+                HttpContext = httpContextMock.Object
+            };
+
+            // 创建控制器实例，将ControllerContext设置为模拟的ControllerContext
+            var controller = new SysServerController
+            {
+                ControllerContext = controllerContext
+            };
+
+            // 创建模拟的请求头字典
+            var requestHeaders = new HeaderDictionary(new Dictionary<string, StringValues>
+            {
+                { "Ocp-Apim-Subscription-Key", "subscription-key-value" },
+                { "Content-Type", "application/json" },
+                { "X-Request-Id", "request-id-value" },
+                { "X-Bank-Code", "bank-code-value" },
+                { "X-Store-Number-Dept-Code", "store-dept-code-value" },
+                { "X-User-Id", "user-id-value" }
+            });
+
+            // 创建模拟的HttpRequest，并设置Headers属性
+            var httpRequestMock = new Mock<HttpRequest>();
+            httpRequestMock.SetupGet(r => r.Headers).Returns(requestHeaders);
+
+            // 设置HttpContext的Request属性为模拟的HttpRequest
+            httpContextMock.SetupGet(c => c.Request).Returns(httpRequestMock.Object);
+
+            // 创建模拟的HttpResponse
+            var httpResponseMock = new Mock<HttpResponse>();
+            var responseHeaders = new HeaderDictionary();
+            httpResponseMock.SetupGet(r => r.Headers).Returns(responseHeaders);
+
+            // 设置HttpContext的Response属性为模拟的HttpResponse
+            httpContextMock.SetupGet(c => c.Response).Returns(httpResponseMock.Object);
+
+            // 创建一个有效的Operation模型
+            var validOperation = new Operation { OperationBusinnesId = "SYSTEM", Status = "0" };
+
+            // 执行控制器操作
+            var result = controller.PostApiControl(validOperation) as OkObjectResult;
+
+            // 断言结果
+            Assert.IsNotNull(result);
+            Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
+
+            // 这里可以添加更多的断言，例如对响应头的检查
+        }
+    }
+}
