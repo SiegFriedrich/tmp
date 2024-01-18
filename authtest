@@ -1,4 +1,7 @@
-   Test method commonapi.Tests.AuthControllerTest.Login_ReturnsOkWithCsrfToken threw exception:
+error CS1503: 引数 1: は 'object' から 'string' へ変換する
+ことはできません 
+
+Test method commonapi.Tests.AuthControllerTest.Login_ReturnsOkWithCsrfToken threw exception:
 Microsoft.CSharp.RuntimeBinder.RuntimeBinderException: The best overloaded method match for 'Newtonsoft.Json.JsonConvert.DeserializeObject<object>(string)' has some invalid arguments
  'object' does not contain a definition for 'CsrfToken'
 
