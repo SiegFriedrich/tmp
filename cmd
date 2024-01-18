@@ -108,3 +108,21 @@ public class CsrfControllerTests
   </ItemGroup>
 
 </Project>
+
+
+
+
+        public AuthController(IUserService userService, IConfiguration configuration)
+        {
+            _userService = userService;
+            _configuration = configuration;
+        }
+
+        [HttpGet("csrf-token")]
+        public IActionResult Login()
+        {
+            //リクエストヘッダにて受け取ったリクエストID（ログトレース用） -> 仮値 ISJF9H92S82HFO9CEDWP03OL63E7T6RFW
+            CommonUtil.AppendFrontResponseHeader(Response, "origin", "exampleRequestWith", "application/json", "exampleAccept", "exampleMaxdevice");
+            var token = GenerateJwtToken();
+            return Ok(new { CsrfToken = token });
+        }
