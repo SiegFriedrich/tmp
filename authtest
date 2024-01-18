@@ -68,3 +68,32 @@ Test method commonapi.Tests.AuthControllerTest.TestCsrfTokenEndpoint threw excep
 System.InvalidOperationException: Misused header name, 'Content-Type'. Make sure request headers are used with HttpRequestMessage, response headers with HttpResponseMessage, and content headers with HttpContent objects.
 
 --------------------------------------------------------------------------------------
+
+ public AuthControllerTest()
+    {
+        _client = new HttpClient();
+        _client.BaseAddress = new System.Uri("http://localhost:8080");
+    }
+    [TestMethod]
+    public async Task TestCsrfTokenEndpoint()
+    {
+        //Postリクエスト
+        var request = new HttpRequestMessage(HttpMethod.Post, "/api/sys/csrf-token");
+        request.Headers.Add("Content-Type", "application/json");
+        request.Content = new StringContent(null, System.Text.Encoding.UTF8, "application/json");
+
+        //Send the request
+        var response = await _client.SendAsync(request);
+
+        //レスポンスアサーション
+        Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+
+        //JSON Response 読み取り
+        var jsonContent = await response.Content.ReadAsStringAsync();
+        Assert.IsTrue(!string.IsNullOrWhiteSpace(jsonContent));
+        // Assert.AreEqual(200, jsonContent.StatusCode);
+
+        //レスポンスをオブジェクトにする
+        var csrfTokenResponse = JsonConvert.DeserializeObject(jsonContent);
+--------------------------------------------------------------------------------------
+
