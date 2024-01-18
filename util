@@ -1,0 +1,85 @@
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualBasic;
+
+namespace commonapi.Shared
+{
+    public static class CommonUtil
+    {
+        public static int SERVER = 0;
+        public static int FRONT = 1;
+
+        public static bool ValidateRequestHeader(IHeaderDictionary headers, int originType)
+        {
+            var SERVER_HEADER_LIST = new List<string>(){
+                "Ocp-Apim-Subscription-Key",
+                "Content-Type",
+                "X-Request-Id",
+                "X-Bank-Code",
+                "X-Store-Number-Dept-Code",
+                "X-User-Id"
+            };
+
+            var FRONT_HEADER_LIST = new List<string>(){
+                "Content-Type"
+            };
+
+            var requestHeaders = new Dictionary<string, string>();
+            var requestHeaderList = new List<string>();
+            foreach (var header in headers)
+            {
+                requestHeaders.Add(header.Key, header.Value.ToString());
+                requestHeaderList.Add(header.Key);
+            }
+
+            //オリジン区分
+            if (originType == SERVER)
+            {
+                foreach (var HEADER_ELE in SERVER_HEADER_LIST)
+                {
+                    if (!requestHeaderList.Contains(HEADER_ELE))
+                    {
+                        throw new ArgumentException("ヘッダー" + HEADER_ELE + "はありません。");
+                    }
+                    if (requestHeaders[HEADER_ELE].IsNullOrEmpty())
+                    {
+                        throw new ArgumentException("ヘッダー" + HEADER_ELE + "の値はありません。");
+                    }
+                }
+            }
+            else if (originType == FRONT)
+            {
+                foreach (var HEADER_ELE in FRONT_HEADER_LIST)
+                {
+                    if (!requestHeaderList.Contains(HEADER_ELE))
+                    {
+                        throw new ArgumentException("ヘッダー" + HEADER_ELE + "はありません。");
+                    }
+                    if (requestHeaders[HEADER_ELE].IsNullOrEmpty())
+                    {
+                        throw new ArgumentException("ヘッダー" + HEADER_ELE + "の値はありません。");
+                    }
+                }
+            }
+            return true;
+        }
+        public static void AppendServerResponseHeader(HttpResponse response, string contentType, string xContentTypeOptions, string xFrameOptions, string xRequestId)
+        {
+            response.Headers.Append("Content-Type", contentType);
+            response.Headers.Append("X-Content-Type-Options", xContentTypeOptions);
+            response.Headers.Append("X-Frame-Options", xFrameOptions);
+            response.Headers.Append("X-Request-Id", xRequestId);
+        }
+
+        public static void AppendFrontResponseHeader(HttpResponse response, string origin, string xRequestWith, string contentType, string accetp, string maxDateServiceVersion)
+        {
+            //Frontend Response Headers
+            //Origin, X-Requested-With, Content-Type, Accept, MaxDateServiceVersion
+            response.Headers.Append("Origin", origin);
+            response.Headers.Append("X-Requested-With", xRequestWith);
+            response.Headers.Append("Content-Type", contentType);
+            response.Headers.Append("Accept", accetp);
+            response.Headers.Append("MaxDateServiceVersion", maxDateServiceVersion);
+        }
+    }
+}
+
