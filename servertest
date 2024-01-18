@@ -1,0 +1,25 @@
+//Server間の通信を処理する場合
+using Microsoft.AspNetCore.Mvc;
+using commonapi.Models;
+using commonapi.Shared;
+using Microsoft.AspNetCore.Authorization;
+
+[Authorize]
+[ApiController]
+[Route("api/sys/server")]
+public class SysServerController : ControllerBase
+{
+    [HttpPost("api-control")]
+    public ActionResult PostApiControl([FromBody] Operation operation)
+    {
+        //共通方法を利用してリクエストのヘッダーをチェック
+        CommonUtil.ValidateRequestHeader(Request.Headers, CommonUtil.SERVER);
+        if (operation.OperationBusinnesId == "SYSTEM" && operation.Status == "0")
+        {
+            //共通方法を利用してリスポンスにヘッダーを追加
+            CommonUtil.AppendServerResponseHeader(Response, "application/json", "nosniff", "SAMEORIGIN", "ISJF9H92S82HFO9CEDWP03OL63E7T6RFW");
+            return Ok(new Operation { OperationBusinnesId = "SYSTEM", Status = "0" });
+        }
+        return Unauthorized();
+    }
+}
