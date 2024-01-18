@@ -196,3 +196,14 @@ public class AuthControllerTest
 
 AuthControllerTest.cs(35,62): error CS1061: 'string' に 'Returns' の定義が含まれておらず
 、型 'string'
+
+
+-----------------------------------------------------------
+C:\temp\tokensample\tokensample\commonapi.Tests\Tests\AuthControllerTest.cs(52,37): error CS1031: 型が必要です [C:\temp\tokensample\tokensample\comm
+onapi.Tests\commonapi.Tests.csproj]
+C:\temp\tokensample\tokensample\commonapi.Tests\Tests\AuthControllerTest.cs(52,37): error CS1002: ; が必要です [C:\temp\tokensample\tokensample\com
+monapi.Tests\commonapi.Tests.csproj]
+C:\temp\tokensample\tokensample\commonapi.Tests\Tests\AuthControllerTest.cs(52,56): error CS1001: 識別子がありません [C:\temp\tokensample\tokensample\c
+ommonapi.Tests\commonapi.Tests.csproj]
+C:\temp\tokensample\tokensample\commonapi.Tests\Tests\AuthControllerTest.cs(52,56): error CS1002: ; が必要です [C:\temp\tokensample\tokensample\com
+monapi.Tests\commonapi.Tests.csproj]
