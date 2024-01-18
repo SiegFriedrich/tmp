@@ -1,6 +1,14 @@
-    var token = result.Value as { CsrfToken = ""};
+    public void Login_ReturnsOkWithCsrfToken()
+    {
+        var result = _authController.Login() as OkObjectResult;
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+
+        // Token検証
+        var token = result.Value as { CsrfToken = ""};
         Assert.IsNotNull(token);
         Assert.IsFalse(string.IsNullOrEmpty(token.CsrfToken));
+    }
 ----------------------------------------
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
