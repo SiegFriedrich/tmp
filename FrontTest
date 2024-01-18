@@ -1,0 +1,28 @@
+//クライアント（フロントエンド）からの通信を処理する場合（リクエストが来るとき）
+using Microsoft.AspNetCore.Mvc;
+using commonapi.Models;
+using Microsoft.AspNetCore.Authorization;
+using commonapi.Shared;
+
+[Authorize]
+[ApiController]
+[Route("api/sys")]
+public class SysApiController : ControllerBase
+{
+    [HttpPost("api-control")]
+    public ActionResult PostApiControl([FromBody] Operation operation)
+    {
+        var headers = Request.Headers;
+        //共通方法を利用してリクエストのヘッダーをチェック
+        CommonUtil.ValidateRequestHeader(Request.Headers, CommonUtil.FRONT);
+        if (operation.OperationBusinnesId == "SYSTEM" && operation.Status == "0")
+        {
+            //500 エラー　テスト用
+            //throw new Exception();
+            CommonUtil.AppendFrontResponseHeader(Response, "origin", "exampleRequestWith", "application/json", "exampleAccept", "exampleMaxdevice");
+            return Ok(new Operation { OperationBusinnesId = "SYSTEM", Status = "0" });
+        }
+        // var commonException = new CommonException(505, "システムエラー", "システムエラー詳細");
+        throw new CommonException(505, "システムエラー", "システムエラー詳細");
+    }
+}
