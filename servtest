@@ -84,3 +84,48 @@ namespace commonapi.Tests
         }
     }
 }
+
+
+
+C:\temp\tokensample\tokensample\commonapi.Tests\Tests\ServerReqResTest.cs(20,82): error CS0246: 型または名前空間の名前 'StringValues' が見つかりま
+せんでした (using ディレ
+クティブまたはアセンブリ参照が指定されていることを確認してください) [C:\temp\tokensample\tokensample\commonapi.Tests\commonapi.Tests.csproj]      
+C:\temp\tokensample\tokensample\commonapi.Tests\Tests\ServerReqResTest.cs(22,17): error CS1950: コレクション初期化子に最も適しているオーバーロード
+ Add メソッド 'Dictionary<st
+ring, StringValues>.Add(string, StringValues)' には無効な引数がいくつか含まれています [C:\temp\tokensample\tokensample\commonapi.Tests\commonapi.Tests.csproj]
+C:\temp\tokensample\tokensample\commonapi.Tests\Tests\ServerReqResTest.cs(22,48): error CS1503: 引数 2: は 'string' から 'StringValues' へ変換する
+ことはできません
+[C:\temp\tokensample\tokensample\commonapi.Tests\commonapi.Tests.csproj]
+C:\temp\tokensample\tokensample\commonapi.Tests\Tests\ServerReqResTest.cs(23,17): error CS1950: コレクション初期化子に最も適しているオーバーロード
+ Add メソッド 'Dictionary<st
+ring, StringValues>.Add(string, StringValues)' には無効な引数がいくつか含まれています [C:\temp\tokensample\tokensample\commonapi.Tests\commonapi.Tests.csproj]
+C:\temp\tokensample\tokensample\commonapi.Tests\Tests\ServerReqResTest.cs(23,35): error CS1503: 引数 2: は 'string' から 'StringValues' へ変換する
+ことはできません
+[C:\temp\tokensample\tokensample\commonapi.Tests\commonapi.Tests.csproj]
+C:\temp\tokensample\tokensample\commonapi.Tests\Tests\ServerReqResTest.cs(24,17): error CS1950: コレクション初期化子に最も適しているオーバーロード
+ Add メソッド 'Dictionary<st
+ring, StringValues>.Add(string, StringValues)' には無効な引数がいくつか含まれています [C:\temp\tokensample\tokensample\commonapi.Tests\commonapi.Tests.csproj]
+C:\temp\tokensample\tokensample\commonapi.Tests\Tests\ServerReqResTest.cs(24,35): error CS1503: 引数 2: は 'string' から 'StringValues' へ変換する
+ことはできません
+[C:\temp\tokensample\tokensample\commonapi.Tests\commonapi.Tests.csproj]
+C:\temp\tokensample\tokensample\commonapi.Tests\Tests\ServerReqResTest.cs(25,17): error CS1950: コレクション初期化子に最も適しているオーバーロード
+ Add メソッド 'Dictionary<st
+ring, StringValues>.Add(string, StringValues)' には無効な引数がいくつか含まれています [C:\temp\tokensample\tokensample\commonapi.Tests\commonapi.Tests.csproj]
+C:\temp\tokensample\tokensample\commonapi.Tests\Tests\ServerReqResTest.cs(25,34): error CS1503: 引数 2: は 'string' から 'StringValues' へ変換する
+ことはできません
+[C:\temp\tokensample\tokensample\commonapi.Tests\commonapi.Tests.csproj]
+C:\temp\tokensample\tokensample\commonapi.Tests\Tests\ServerReqResTest.cs(26,17): error CS1950: コレクション初期化子に最も適しているオーバーロード
+ Add メソッド 'Dictionary<st
+ring, StringValues>.Add(string, StringValues)' には無効な引数がいくつか含まれています [C:\temp\tokensample\tokensample\commonapi.Tests\commonapi.Tests.csproj]
+C:\temp\tokensample\tokensample\commonapi.Tests\Tests\ServerReqResTest.cs(26,47): error CS1503: 引数 2: は 'string' から 'StringValues' へ変換する
+ことはできません
+[C:\temp\tokensample\tokensample\commonapi.Tests\commonapi.Tests.csproj]
+C:\temp\tokensample\tokensample\commonapi.Tests\Tests\ServerReqResTest.cs(27,17): error CS1950: コレクション初期化子に最も適しているオーバーロード
+ Add メソッド 'Dictionary<st
+ring, StringValues>.Add(string, StringValues)' には無効な引数がいくつか含まれています [C:\temp\tokensample\tokensample\commonapi.Tests\commonapi.Tests.csproj]
+C:\temp\tokensample\tokensample\commonapi.Tests\Tests\ServerReqResTest.cs(27,32): error CS1503: 引数 2: は 'string' から 'StringValues' へ変換する
+ことはできません
+[C:\temp\tokensample\tokensample\commonapi.Tests\commonapi.Tests.csproj]
+C:\temp\tokensample\tokensample\commonapi.Tests\Tests\ServerReqResTest.cs(34,34): error CS1729: 'SysServerController' には、引数 2 を指定するコン 
+ストラクターは含まれてい
+ません [C:\temp\tokensample\tokensample\commonapi.Tests\commonapi.Tests.csproj]
