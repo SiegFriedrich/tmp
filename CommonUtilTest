@@ -1,0 +1,82 @@
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using commonapi.Shared;
+
+namespace commonapi.Tests
+{
+    [TestClass]
+    public class CommonUtilTests
+    {
+        [TestMethod]
+        public void ValidateRequestHeader_ServerOriginWithValidHeaders_ReturnsTrue()
+        {
+            // Arrange
+            var headers = new HeaderDictionary
+            {
+                { "Ocp-Apim-Subscription-Key", "subscription-key-value" },
+                { "Content-Type", "application/json" },
+                { "X-Request-Id", "request-id-value" },
+                { "X-Bank-Code", "bank-code-value" },
+                { "X-Store-Number-Dept-Code", "store-dept-code-value" },
+                { "X-User-Id", "user-id-value" }
+            };
+
+            // Act
+            var result = CommonUtil.ValidateRequestHeader(headers, CommonUtil.SERVER);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void ValidateRequestHeader_ServerOriginWithMissingHeaders_ThrowsArgumentException()
+        {
+            // Arrange
+            var headers = new HeaderDictionary
+            {
+                { "Content-Type", "application/json" }
+                // Missing other required headers
+            };
+
+            // Act and Assert
+            Assert.ThrowsException<ArgumentException>(() =>
+            {
+                CommonUtil.ValidateRequestHeader(headers, CommonUtil.SERVER);
+            });
+        }
+
+        [TestMethod]
+        public void ValidateRequestHeader_FrontOriginWithValidHeaders_ReturnsTrue()
+        {
+            // Arrange
+            var headers = new HeaderDictionary
+            {
+                { "Content-Type", "application/json" }
+            };
+
+            // Act
+            var result = CommonUtil.ValidateRequestHeader(headers, CommonUtil.FRONT);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void ValidateRequestHeader_FrontOriginWithMissingHeaders_ThrowsArgumentException()
+        {
+            // Arrange
+            var headers = new HeaderDictionary
+            {
+                // Missing required headers for front origin
+            };
+
+            // Act and Assert
+            Assert.ThrowsException<ArgumentException>(() =>
+            {
+                CommonUtil.ValidateRequestHeader(headers, CommonUtil.FRONT);
+            });
+        }
+    }
+}
+
