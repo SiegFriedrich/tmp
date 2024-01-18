@@ -96,4 +96,98 @@ System.InvalidOperationException: Misused header name, 'Content-Type'. Make sure
         //レスポンスをオブジェクトにする
         var csrfTokenResponse = JsonConvert.DeserializeObject(jsonContent);
 --------------------------------------------------------------------------------------
+using System.Net;
+using System.Net.Http;
+using Newtonsoft.Json;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Extensions.Configuration;
+using Moq;
+using commonapi.Controllers;
+// using commonapi.Models;
+using commonapi;
 
+namespace commonapi.Tests;
+
+[TestClass]
+public class AuthControllerTest
+{
+    private readonly HttpClient _client;
+    private AuthController _authController;
+    private Mock<IUserService> _mockUserService;
+    private Mock<IConfiguration> _mockConfiguration;
+
+
+    //テスト要素初期化
+    public AuthControllerTest()
+    {
+        _client = new HttpClient();
+        _client.BaseAddress = new System.Uri("http://localhost:8080");
+
+        //Mock UserService and IConfiguration
+        _mockUserService = new Mock<IUserService>();
+        _mockConfiguration = new Mock<IConfiguration>();
+
+        _mockConfiguration.Setup(config => config["Jwt:Key"].Returns("ExampleJWTKeyForThisApplicationExampleJWTKeyForThisApplication"));
+        _mockConfiguration.Setup(config => config["Jwt:Issuer"].Returns("http://localhost:8080"));
+        _mockConfiguration.Setup(config => config["Jwt:Audience"].Returns("http://localhost:8080"));
+
+        _authController = new AuthController(_mockUserService.Object, _mockConfiguration.Object);
+    }
+
+    // [TestInitialize]
+    // public void Initialize()
+    // {
+
+    // }
+
+
+    //正常系
+    [TestMethod]
+    public void Login_ReturnsOkWithCsrfToken()
+    {
+        var result = _authController.Login() as OkObjectResult;
+        Assert.IsNotNull(result);
+    }
+
+
+
+
+    //API疎通テスト　GETメソッドで投げる時
+    [TestMethod]
+    public async Task TestCsrfTokenEndpointSuccess1()
+    {
+        //Getリクエスト
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api/sys/csrf-token");
+        request.Content = new StringContent("", System.Text.Encoding.UTF8, "application/json");
+
+        //Send the request
+        var response = await _client.SendAsync(request);
+
+        //レスポンスアサーション
+        Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+
+        //JSON Response 読み取り
+        var jsonContent = await response.Content.ReadAsStringAsync();
+        Assert.IsTrue(!string.IsNullOrWhiteSpace(jsonContent));
+    }
+
+
+    //異常系
+    //API疎通テスト POSTメソッドで投げる時
+    [TestMethod]
+    public async Task TestCsrfTokenEndpointFail1()
+    {
+        //Postリクエスト
+        var request = new HttpRequestMessage(HttpMethod.Post, "/api/sys/csrf-token");
+        request.Content = new StringContent("", System.Text.Encoding.UTF8, "application/json");
+
+        //Send the request
+        var response = await _client.SendAsync(request);
+
+        //レスポンスアサーション
+        Assert.AreEqual(HttpStatusCode.MethodNotAllowed, response.StatusCode);
+    }
+}
