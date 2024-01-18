@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using commonapi.Controllers;
 using commonapi.Models;
-using commonapi.Shared;
 
 namespace commonapi.Tests
 {
@@ -14,19 +14,19 @@ namespace commonapi.Tests
         public void PostApiControl_ValidOperation_ReturnsOk()
         {
             // Arrange
-            var controller = new SysServerController();
+            var mockUserService = new Mock<IUserService>();
+            var mockConfiguration = new Mock<IConfiguration>();
+
+            var controller = new SysServerController(mockUserService.Object, mockConfiguration.Object);
+            var mockHttpContext = new Mock<HttpContext>();
             var mockRequest = new Mock<HttpRequest>();
             var mockResponse = new Mock<HttpResponse>();
-            mockRequest.SetupGet(r => r.Headers).Returns(new HeaderDictionary());
-            mockResponse.SetupAllProperties();
 
+            mockHttpContext.SetupGet(h => h.Request).Returns(mockRequest.Object);
+            mockHttpContext.SetupGet(h => h.Response).Returns(mockResponse.Object);
             controller.ControllerContext = new ControllerContext
             {
-                HttpContext = new DefaultHttpContext
-                {
-                    Request = mockRequest.Object,
-                    Response = mockResponse.Object
-                }
+                HttpContext = mockHttpContext.Object
             };
 
             var validOperation = new Operation { OperationBusinnesId = "SYSTEM", Status = "0" };
@@ -46,19 +46,19 @@ namespace commonapi.Tests
         public void PostApiControl_InvalidOperation_ReturnsUnauthorized()
         {
             // Arrange
-            var controller = new SysServerController();
+            var mockUserService = new Mock<IUserService>();
+            var mockConfiguration = new Mock<IConfiguration>();
+
+            var controller = new SysServerController(mockUserService.Object, mockConfiguration.Object);
+            var mockHttpContext = new Mock<HttpContext>();
             var mockRequest = new Mock<HttpRequest>();
             var mockResponse = new Mock<HttpResponse>();
-            mockRequest.SetupGet(r => r.Headers).Returns(new HeaderDictionary());
-            mockResponse.SetupAllProperties();
 
+            mockHttpContext.SetupGet(h => h.Request).Returns(mockRequest.Object);
+            mockHttpContext.SetupGet(h => h.Response).Returns(mockResponse.Object);
             controller.ControllerContext = new ControllerContext
             {
-                HttpContext = new DefaultHttpContext
-                {
-                    Request = mockRequest.Object,
-                    Response = mockResponse.Object
-                }
+                HttpContext = mockHttpContext.Object
             };
 
             var invalidOperation = new Operation { OperationBusinnesId = "INVALID", Status = "1" };
@@ -72,6 +72,7 @@ namespace commonapi.Tests
         }
     }
 }
+
 
 
 using Microsoft.AspNetCore.Http;
