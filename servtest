@@ -141,7 +141,14 @@ namespace YourProject.Tests
     }
 }
 
-
+Test method YourProject.Tests.SysServerControllerTests.PostApiControl_ValidOperation_ReturnsOk threw exception: 
+System.ArgumentNullException: Value cannot be null. (Parameter 'headers')
+  スタック トレース:
+      at System.ArgumentNullException.Throw(String paramName)
+   at System.ArgumentNullException.ThrowIfNull(Object argument, String paramName)
+   at Microsoft.AspNetCore.Http.ParsingHelpers.AppendHeaderUnmodified(IHeaderDictionary headers, String key, StringValues values)
+   at commonapi.Shared.CommonUtil.AppendServerResponseHeader(HttpResponse response, String contentType, String xContentTypeOptions, String xFrameOptions, String xRequestId) in C:\temp\tokensample\tokensample\commonapi\Shared\CommonUtil.cs:line 67
+   at SysServerController.PostApiControl(Operation operation) in C:\temp\tokensample\tokensample\commonapi\Controllers\ApiServerController.cs:line 20
 
 
 C:\temp\tokensample\tokensample\commonapi.Tests\Tests\ServerReqResTest.cs(20,82): error CS0246: 型または名前空間の名前 'StringValues' が見つかりま
