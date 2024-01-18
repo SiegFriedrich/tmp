@@ -1,0 +1,289 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using commonapi.Models;
+using commonapi.Shared;
+
+namespace commonapi.Tests
+{
+    [TestClass]
+    public class SysServerControllerTests
+    {
+        [TestMethod]
+        public void PostApiControl_ValidOperation_ReturnsOk()
+        {
+            // Arrange
+            var controller = new SysServerController();
+            var mockRequest = new Mock<HttpRequest>();
+            var mockResponse = new Mock<HttpResponse>();
+            mockRequest.SetupGet(r => r.Headers).Returns(new HeaderDictionary());
+            mockResponse.SetupAllProperties();
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    Request = mockRequest.Object,
+                    Response = mockResponse.Object
+                }
+            };
+
+            var validOperation = new Operation { OperationBusinnesId = "SYSTEM", Status = "0" };
+
+            // Act
+            var result = controller.PostApiControl(validOperation);
+
+            // Assert
+            var okResult = result as OkObjectResult;
+            Assert.IsNotNull(okResult);
+            Assert.AreEqual(StatusCodes.Status200OK, okResult.StatusCode);
+
+            // You can further assert the response headers or content here if needed.
+        }
+
+        [TestMethod]
+        public void PostApiControl_InvalidOperation_ReturnsUnauthorized()
+        {
+            // Arrange
+            var controller = new SysServerController();
+            var mockRequest = new Mock<HttpRequest>();
+            var mockResponse = new Mock<HttpResponse>();
+            mockRequest.SetupGet(r => r.Headers).Returns(new HeaderDictionary());
+            mockResponse.SetupAllProperties();
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    Request = mockRequest.Object,
+                    Response = mockResponse.Object
+                }
+            };
+
+            var invalidOperation = new Operation { OperationBusinnesId = "INVALID", Status = "1" };
+
+            // Act
+            var result = controller.PostApiControl(invalidOperation);
+
+            // Assert
+            var unauthorizedResult = result as UnauthorizedResult;
+            Assert.IsNotNull(unauthorizedResult);
+        }
+    }
+}
+
+
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using commonapi.Controllers;
+using commonapi.Models;
+
+namespace commonapi.Tests
+{
+    [TestClass]
+    public class SysApiControllerTests
+    {
+        private SysApiController _sysApiController;
+        private Mock<IHeaderDictionary> _mockHeaders;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            // 初始化 Mock 对象
+            _mockHeaders = new Mock<IHeaderDictionary>();
+            
+            // 模拟请求头
+            _mockHeaders.Setup(h => h["Content-Type"]).Returns(new StringValues("application/json"));
+
+            // 创建 SysApiController，注入模拟的请求头
+            _sysApiController = new SysApiController();
+            _sysApiController.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    Request = new DefaultHttpRequest
+                    {
+                        Headers = _mockHeaders.Object
+                    }
+                }
+            };
+        }
+
+        [TestMethod]
+        public void PostApiControl_ValidOperation_ReturnsOk()
+        {
+            // Arrange
+            var validOperation = new Operation { OperationBusinnesId = "SYSTEM", Status = "0" };
+
+            // Act
+            var result = _sysApiController.PostApiControl(validOperation);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+
+            // 可以进一步验证返回结果中包含的内容
+            var okResult = (OkObjectResult)result;
+            var operation = okResult.Value as Operation;
+            Assert.IsNotNull(operation);
+            Assert.AreEqual("SYSTEM", operation.OperationBusinnesId);
+            Assert.AreEqual("0", operation.Status);
+        }
+
+        [TestMethod]
+        public void PostApiControl_InvalidOperation_ReturnsInternalServerError()
+        {
+            // Arrange
+            var invalidOperation = new Operation { OperationBusinnesId = "INVALID", Status = "1" };
+
+            // Act
+            var result = _sysApiController.PostApiControl(invalidOperation);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(ObjectResult));
+            var objectResult = (ObjectResult)result;
+            Assert.AreEqual(500, objectResult.StatusCode);
+            Assert.AreEqual("システムエラー", objectResult.Value);
+        }
+    }
+}
+
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using commonapi.Controllers;
+using commonapi.Models;
+
+namespace commonapi.Tests
+{
+    [TestClass]
+    public class SysApiControllerTests
+    {
+        private SysApiController _sysApiController;
+        private Mock<IHeaderDictionary> _mockHeaders;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            // 初始化 Mock 对象
+            _mockHeaders = new Mock<IHeaderDictionary>();
+            
+            // 模拟请求头
+            _mockHeaders.Setup(h => h["Content-Type"]).Returns(new StringValues("application/json"));
+
+            // 创建 SysApiController，注入模拟的请求头
+            _sysApiController = new SysApiController();
+            _sysApiController.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    Request = new DefaultHttpRequest
+                    {
+                        Headers = _mockHeaders.Object
+                    }
+                }
+            };
+        }
+
+        [TestMethod]
+        public void PostApiControl_ValidOperation_ReturnsOk()
+        {
+            // Arrange
+            var validOperation = new Operation { OperationBusinnesId = "SYSTEM", Status = "0" };
+
+            // Act
+            var result = _sysApiController.PostApiControl(validOperation);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+
+            // 可以进一步验证返回结果中包含的内容
+            var okResult = (OkObjectResult)result;
+            var operation = okResult.Value as Operation;
+            Assert.IsNotNull(operation);
+            Assert.AreEqual("SYSTEM", operation.OperationBusinnesId);
+            Assert.AreEqual("0", operation.Status);
+        }
+
+        [TestMethod]
+        public void PostApiControl_InvalidOperation_ReturnsInternalServerError()
+        {
+            // Arrange
+            var invalidOperation = new Operation { OperationBusinnesId = "INVALID", Status = "1" };
+
+            // Act
+            var result = _sysApiController.PostApiControl(invalidOperation);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(ObjectResult));
+            var objectResult = (ObjectResult)result;
+            Assert.AreEqual(500, objectResult.StatusCode);
+            Assert.AreEqual("システムエラー", objectResult.Value);
+        }
+
+        [TestMethod]
+        public void PostApiControl_BadRequest_ReturnsBadRequest()
+        {
+            // Arrange
+            var badRequestOperation = new Operation { OperationBusinnesId = "SYSTEM", Status = "1" };
+
+            // Act
+            var result = _sysApiController.PostApiControl(badRequestOperation);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(BadRequestResult));
+        }
+
+        [TestMethod]
+        public void PostApiControl_Unauthorized_ReturnsUnauthorized()
+        {
+            // Arrange
+            var unauthorizedOperation = new Operation { OperationBusinnesId = "SYSTEM", Status = "0" };
+
+            // Act
+            var result = _sysApiController.PostApiControlUnauthorized(unauthorizedOperation);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(UnauthorizedResult));
+        }
+
+        [TestMethod]
+        public void PostApiControl_NotFound_ReturnsNotFound()
+        {
+            // Arrange
+            var notFoundOperation = new Operation { OperationBusinnesId = "NOT_FOUND", Status = "0" };
+
+            // Act
+            var result = _sysApiController.PostApiControl(notFoundOperation);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(NotFoundResult));
+        }
+
+        [TestMethod]
+        public void PostApiControl_UnprocessableEntity_ReturnsUnprocessableEntity()
+        {
+            // Arrange
+            var unprocessableEntityOperation = new Operation { OperationBusinnesId = "SYSTEM", Status = "2" };
+
+            // Act
+            var result = _sysApiController.PostApiControl(unprocessableEntityOperation);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(UnprocessableEntityResult));
+        }
+    }
+}

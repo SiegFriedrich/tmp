@@ -1,4 +1,4 @@
-        var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
 
 引数 1: は 'Microsoft.AspNetCore.Mvc.IActionResult
 ' から 'string' へ変換することはできません [C:\temp\tokensample\tokensample\commonapi.Tests\commonapi.Tests.csproj]
@@ -17,10 +17,10 @@ Commit: e7b8488daf
 No SDKs were found.
 
 .NET runtimes installed:
-Microsoft.AspNetCore.App 6.0.24 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
-Microsoft.NETCore.App 6.0.24 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+Microsoft.AspNetCore.App 6.0.24[C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+Microsoft.NETCore.App 6.0.24[C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
 
-Download .NET:
+Download.NET:
 https://aka.ms/dotnet-download
 
 Learn about .NET Runtimes and SDKs:
@@ -37,7 +37,7 @@ Framework: 'Microsoft.NETCore.App', version '8.0.0' (x64)
 .NET location: C:\Program Files\dotnet\
 
 The following frameworks were found:
-6.0.24 at [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+6.0.24 at[C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
 
 Learn about framework resolution:
 https://aka.ms/dotnet/app-launch-failed
@@ -46,50 +46,50 @@ To install missing framework, download:
 https://aka.ms/dotnet-core-applaunch?framework=Microsoft.NETCore.App&framework_version=8.0.0&arch=x64&rid=win10-x64
 private string GenerateJwtToken(User user)
 {
-var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(\_configuration["Jwt:Key"]));
-var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-var TIME_SPAN = 24;
+    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(\_configuration["Jwt:Key"]));
+    var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+    var TIME_SPAN = 24;
 
-            var claims = new[]
-            {
+    var claims = new[]
+    {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Username),
                 new Claim(JwtRegisteredClaimNames.Exp, "24"),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
 
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
-                claims,
-                expires: DateTime.Now.AddHours(TIME_SPAN),
-                signingCredentials: credentials);
+    var token = new JwtSecurityToken(
+        issuer: _configuration["Jwt:Issuer"],
+        audience: _configuration["Jwt:Audience"],
+        claims,
+        expires: DateTime.Now.AddHours(TIME_SPAN),
+        signingCredentials: credentials);
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-
+    return new JwtSecurityTokenHandler().WriteToken(token);
+}
 
 
-        ---------------------
 
 
-        var builder = WebApplication.CreateBuilder(args);
+---------------------
+
+
+var builder = WebApplication.CreateBuilder(args);
 
 // 添加认证服务并配置 JWT Bearer
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
 {
-options.TokenValidationParameters = new TokenValidationParameters
-{
-ValidateIssuerSigningKey = true,
-IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-ValidateIssuer = true,
-ValidIssuer = builder.Configuration["Jwt:Issuer"],
-ValidateAudience = true,
-ValidAudience = builder.Configuration["Jwt:Audience"],
-ValidateLifetime = true
-};
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+        ValidateIssuer = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        ValidateLifetime = true
+    };
 });
 
 builder.Services.AddControllers();
@@ -103,3 +103,80 @@ app.UseAuthorization();
 // ... 其他配置
 
 app.Run();
+
+
+
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using commonapi.Models;
+using commonapi.Shared;
+
+namespace commonapi.Tests
+{
+    [TestClass]
+    public class SysServerControllerTests
+    {
+        [TestMethod]
+        public void PostApiControl_ValidOperation_ReturnsOk()
+        {
+            // Arrange
+            var controller = new SysServerController();
+            var mockRequest = new Mock<HttpRequest>();
+            var mockResponse = new Mock<HttpResponse>();
+            mockRequest.SetupGet(r => r.Headers).Returns(new HeaderDictionary());
+            mockResponse.SetupAllProperties();
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    Request = mockRequest.Object,
+                    Response = mockResponse.Object
+                }
+            };
+
+            var validOperation = new Operation { OperationBusinnesId = "SYSTEM", Status = "0" };
+
+            // Act
+            var result = controller.PostApiControl(validOperation);
+
+            // Assert
+            var okResult = result as OkObjectResult;
+            Assert.IsNotNull(okResult);
+            Assert.AreEqual(StatusCodes.Status200OK, okResult.StatusCode);
+
+            // You can further assert the response headers or content here if needed.
+        }
+
+        [TestMethod]
+        public void PostApiControl_InvalidOperation_ReturnsUnauthorized()
+        {
+            // Arrange
+            var controller = new SysServerController();
+            var mockRequest = new Mock<HttpRequest>();
+            var mockResponse = new Mock<HttpResponse>();
+            mockRequest.SetupGet(r => r.Headers).Returns(new HeaderDictionary());
+            mockResponse.SetupAllProperties();
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    Request = mockRequest.Object,
+                    Response = mockResponse.Object
+                }
+            };
+
+            var invalidOperation = new Operation { OperationBusinnesId = "INVALID", Status = "1" };
+
+            // Act
+            var result = controller.PostApiControl(invalidOperation);
+
+            // Assert
+            var unauthorizedResult = result as UnauthorizedResult;
+            Assert.IsNotNull(unauthorizedResult);
+        }
+    }
+}
