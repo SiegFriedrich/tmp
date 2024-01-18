@@ -1,4 +1,7 @@
-    public void Login_ReturnsOkWithCsrfToken()
+
+ 'object' does not contain a definition for 'CsrfToken'
+
+public void Login_ReturnsOkWithCsrfToken()
     {
         var result = _authController.Login() as OkObjectResult;
         Assert.IsNotNull(result);
