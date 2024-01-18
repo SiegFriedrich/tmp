@@ -1,3 +1,8 @@
+        var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+
+引数 1: は 'Microsoft.AspNetCore.Mvc.IActionResult
+' から 'string' へ変換することはできません [C:\temp\tokensample\tokensample\commonapi.Tests\commonapi.Tests.csproj]
+
 C:\inetpub\wwwroot>dotnet --info
 
 global.json file:
