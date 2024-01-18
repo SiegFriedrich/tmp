@@ -23,3 +23,79 @@ public class SysServerController : ControllerBase
         return Unauthorized();
     }
 }
+
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using commonapi.Models;
+using commonapi.Shared;
+
+namespace commonapi.Tests
+{
+    [TestClass]
+    public class SysServerControllerTests
+    {
+        [TestMethod]
+        public void PostApiControl_ValidOperation_ReturnsOk()
+        {
+            // Arrange
+            var controller = new SysServerController();
+            var mockRequest = new Mock<HttpRequest>();
+            var mockResponse = new Mock<HttpResponse>();
+            mockRequest.SetupGet(r => r.Headers).Returns(new HeaderDictionary());
+            mockResponse.SetupAllProperties();
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    Request = mockRequest.Object,
+                    Response = mockResponse.Object
+                }
+            };
+
+            var validOperation = new Operation { OperationBusinnesId = "SYSTEM", Status = "0" };
+
+            // Act
+            var result = controller.PostApiControl(validOperation);
+
+            // Assert
+            var okResult = result as OkObjectResult;
+            Assert.IsNotNull(okResult);
+            Assert.AreEqual(StatusCodes.Status200OK, okResult.StatusCode);
+
+            // You can further assert the response headers or content here if needed.
+        }
+
+        [TestMethod]
+        public void PostApiControl_InvalidOperation_ReturnsUnauthorized()
+        {
+            // Arrange
+            var controller = new SysServerController();
+            var mockRequest = new Mock<HttpRequest>();
+            var mockResponse = new Mock<HttpResponse>();
+            mockRequest.SetupGet(r => r.Headers).Returns(new HeaderDictionary());
+            mockResponse.SetupAllProperties();
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    Request = mockRequest.Object,
+                    Response = mockResponse.Object
+                }
+            };
+
+            var invalidOperation = new Operation { OperationBusinnesId = "INVALID", Status = "1" };
+
+            // Act
+            var result = controller.PostApiControl(invalidOperation);
+
+            // Assert
+            var unauthorizedResult = result as UnauthorizedResult;
+            Assert.IsNotNull(unauthorizedResult);
+        }
+    }
+}
+
