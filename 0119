@@ -1,0 +1,5 @@
+Assert.ThrowsException に失敗しました。例外がスローされませんでした。ArgumentException の例外が予期されていました。
+  スタック トレース:
+     at commonapi.Tests.FrontendReqResTest.PostApiControl_ValidOperation_Returnsfalse() in C:\temp\tokensample\tokensample\commonapi.Tests\Tests\FrontendReqResTest.cs:line 131
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
