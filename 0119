@@ -3,3 +3,15 @@ Assert.ThrowsException に失敗しました。例外がスローされません
      at commonapi.Tests.FrontendReqResTest.PostApiControl_ValidOperation_Returnsfalse() in C:\temp\tokensample\tokensample\commonapi.Tests\Tests\FrontendReqResTest.cs:line 131
    at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
    at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+
+ 失敗 PostApiControl_ValidOperation_Returnsfalse [10 ms]
+  エラー メッセージ:
+   Test method commonapi.Tests.FrontendReqResTest.PostApiControl_ValidOperation_Returnsfalse threw exception:
+System.ArgumentException: ヘッダーContent-Typeはありません。
+  スタック トレース:
+      at commonapi.Shared.CommonUtil.ValidateRequestHeader(IHeaderDictionary headers, Int32 originType) in C:\temp\tokensample\tokensample\commonapi\Shared\CommonUtil.cs:line 55
+   at ApiSysController.PostApiControl(Operation operation) in C:\temp\tokensample\tokensample\commonapi\Controllers\ApiSysController.cs:line 17   
+   at commonapi.Tests.FrontendReqResTest.PostApiControl_ValidOperation_Returnsfalse() in C:\temp\tokensample\tokensample\commonapi.Tests\Tests\FrontendReqResTest.cs:line 127
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
