@@ -23,3 +23,50 @@ public class SysServerController : ControllerBase
         return Unauthorized();
     }
 }
+
+
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using commonapi.Controllers; // 替换为您的实际命名空间
+using commonapi.Models; // 替换为您的实际模型所在命名空间
+
+[TestClass]
+public class SysServerControllerTests
+{
+    [TestMethod]
+    public void PostApiControl_ValidOperation_SetsCorrectResponseHeaders()
+    {
+        // Arrange
+        var headers = new HeaderDictionary();
+        var response = new Mock<HttpResponse>();
+        response.SetupGet(r => r.Headers).Returns(headers);
+
+        var httpContext = new Mock<HttpContext>();
+        httpContext.SetupGet(hc => hc.Response).Returns(response.Object);
+
+        var controllerContext = new ControllerContext
+        {
+            HttpContext = httpContext.Object
+        };
+
+        var controller = new SysServerController
+        {
+            ControllerContext = controllerContext
+        };
+
+        var operation = new Operation { OperationBusinnesId = "SYSTEM", Status = "0" };
+
+        // Act
+        var result = controller.PostApiControl(operation);
+
+        // Assert
+        // 验证特定的响应头是否已被设置
+        Assert.IsTrue(headers.ContainsKey("Content-Type"));
+        Assert.AreEqual("application/json", headers["Content-Type"].ToString());
+        Assert.IsTrue(headers.ContainsKey("X-Custom-Header")); // 替换为您的实际响应头键
+        // 添加对其他响应头的断言...
+    }
+}
+
