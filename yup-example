@@ -1,0 +1,49 @@
+<template>
+  <div>
+    <form @submit.prevent="validateForm">
+      <input v-model="form.username" type="text" placeholder="Username">
+      <div v-if="errors.username">{{ errors.username }}</div>
+      
+      <input v-model="form.email" type="email" placeholder="Email">
+      <div v-if="errors.email">{{ errors.email }}</div>
+      
+      <input v-model="form.password" type="password" placeholder="Password">
+      <div v-if="errors.password">{{ errors.password }}</div>
+      
+      <button type="submit">Register</button>
+    </form>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+import * as yup from 'yup';
+
+const form = ref({
+  username: '',
+  email: '',
+  password: '',
+});
+
+const errors = ref({});
+
+const schema = yup.object({
+  username: yup.string().required('Username is required').min(3, 'Username must be at least 3 characters long'),
+  email: yup.string().email('Must be a valid email').required('Email is required'),
+  password: yup.string().required('Password is required').min(8, 'Password must be at least 8 characters long')
+});
+
+async function validateForm() {
+  try {
+    await schema.validate(form.value, { abortEarly: false });
+    errors.value = {};
+    alert('Form is valid!');
+    // 处理表单提交
+  } catch (err) {
+    errors.value = err.inner.reduce((acc, error) => {
+      acc[error.path] = error.message;
+      return acc;
+    }, {});
+  }
+}
+</script>
