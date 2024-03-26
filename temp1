@@ -1,0 +1,70 @@
+// http.js 或 axios.js
+import axios from 'axios';
+import store from './store'; // 假设你的Pinia store的实例
+
+const http = axios.create({
+  baseURL: 'your-api-base-url',
+  // 其他配置...
+});
+
+http.interceptors.response.use(
+  response => response,
+  error => {
+    const { status } = error.response;
+    if (status === 500 || status === 422) {
+      // 使用Pinia store来控制弹窗的显示
+      store.useErrorStore().setError({
+        message: error.response.data.message,
+        show: true
+      });
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default http;
+// store/errorStore.js
+import { defineStore } from 'pinia';
+
+export const useErrorStore = defineStore('errorStore', {
+  state: () => ({
+    errorMessage: '',
+    showError: false
+  }),
+  actions: {
+    setError({ message, show }) {
+      this.errorMessage = message;
+      this.showError = show;
+    }
+  }
+});
+<template>
+  <v-app>
+    <!-- Your app content -->
+
+    <v-dialog v-model="showError" persistent max-width="600px">
+      <v-card>
+        <v-card-title class="text-h6">Error</v-card-title>
+        <v-card-text>{{ errorMessage }}</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="showError = false">OK</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-app>
+</template>
+
+<script setup>
+import { useErrorStore } from './store/errorStore';
+
+const errorStore = useErrorStore();
+const showError = computed(() => errorStore.showError);
+const errorMessage = computed(() => errorStore.errorMessage);
+
+watch(showError, (newVal) => {
+  if (!newVal) {
+    errorStore.setError({ message: '', show: false });
+  }
+});
+</script>
