@@ -40,20 +40,24 @@ export const useErrorStore = defineStore('errorStore', {
 });
 <template>
   <v-app>
-    <!-- Your app content -->
-
-    <v-dialog v-model="showError" persistent max-width="600px">
+    <v-dialog v-model="store.showError">
       <v-card>
-        <v-card-title class="text-h6">Error</v-card-title>
-        <v-card-text>{{ errorMessage }}</v-card-text>
+        <v-card-title>Error</v-card-title>
+        <v-card-text>{{ store.errorMessage }}</v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="showError = false">OK</v-btn>
+          <v-btn color="primary" text @click="store.clearError">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
   </v-app>
 </template>
+
+<script lang="ts" setup>
+import { useErrorStore } from './stores/errorStore';
+
+const store = useErrorStore();
+</script>
+
 
 <script setup>
 import { useErrorStore } from './store/errorStore';
