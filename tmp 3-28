@@ -1,0 +1,31 @@
+import { createApp } from 'vue';
+import App from './App.vue';
+import * as fs from 'fs';
+import path from 'path';
+
+const app = createApp(App);
+
+// 日志记录函数
+function logErrorToFile(error: Error, component: string, info: string) {
+    // 获取当前日期作为日志文件名的一部分
+    const currentDate = new Date().toISOString().slice(0, 10); // 格式为 'YYYY-MM-DD'
+    const logPath = path.join(__dirname, `logs/error-${currentDate}.log`);
+    const errorMessage = `[${new Date().toISOString()}] Error in ${component}: ${info}\n${error.stack}\n\n`;
+
+    fs.appendFile(logPath, errorMessage, (err) => {
+        if (err) {
+            console.error('Failed to write to log file:', err);
+        }
+    });
+}
+
+
+// 全局错误处理器
+app.config.errorHandler = (err, vm, info) => {
+    console.error(err);
+
+    const componentName = vm.$options.name || vm.$options.__file || 'anonymous component';
+    logErrorToFile(err, componentName, info);
+};
+
+app.mount('#app');
