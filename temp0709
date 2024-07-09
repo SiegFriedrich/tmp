@@ -1,0 +1,76 @@
+<template>
+  <v-container>
+    <v-form @submit.prevent="onSubmit">
+      <v-text-field
+        v-model="form.name"
+        label="Name"
+        :error-messages="errors.value?.name"
+        @input="validateField('name')"
+      ></v-text-field>
+
+      <v-text-field
+        v-model="form.email"
+        label="Email"
+        :error-messages="errors.value?.email"
+        @input="validateField('email')"
+      ></v-text-field>
+
+      <v-text-field
+        v-model="form.password"
+        label="Password"
+        type="password"
+        :error-messages="errors.value?.password"
+        @input="validateField('password')"
+      ></v-text-field>
+
+      <v-btn type="submit">Submit</v-btn>
+    </v-form>
+  </v-container>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+import { useForm, configure } from 'vee-validate';
+import * as yup from 'yup';
+
+const schema = yup.object({
+  name: yup.string().required('Name is required'),
+  email: yup.string().email('Invalid email').required('Email is required'),
+  password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
+});
+
+configure({
+  generateMessage: ctx => {
+    const messages = {
+      required: `The field ${ctx.field} is required.`,
+      email: `The field ${ctx.field} must be a valid email.`,
+      min: `The field ${ctx.field} is too short.`,
+    };
+
+    const message = messages[ctx.rule.name]
+      ? messages[ctx.rule.name]
+      : `The field ${ctx.field} is invalid.`;
+
+    return message;
+  },
+  validateOnInput: true, // eager模式
+});
+
+const form = ref({
+  name: '',
+  email: '',
+  password: '',
+});
+
+const { handleSubmit, errors, validateField } = useForm({
+  validationSchema: schema,
+});
+
+const onSubmit = handleSubmit(values => {
+  alert(JSON.stringify(values));
+});
+</script>
+
+<style scoped>
+/* 这里可以添加一些样式 */
+</style>
