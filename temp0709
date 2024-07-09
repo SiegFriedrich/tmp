@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <Form @submit="onSubmit">
+    <Form v-slot="{ errors, submitForm }" @submit="submitForm(onSubmit)">
       <Field
         name="name"
         rules="required"
@@ -44,18 +44,14 @@
 </template>
 
 <script setup>
-import { useForm, Field, Form } from 'vee-validate';
+import { Form, Field } from 'vee-validate';
 import * as yup from 'yup';
 
+// 定义验证模式
 const schema = yup.object({
   name: yup.string().required('Name is required'),
   email: yup.string().email('Invalid email').required('Email is required'),
   password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
-});
-
-useForm({
-  validationSchema: schema,
-  validateOnInput: true, // eager模式
 });
 
 const onSubmit = (values) => {
