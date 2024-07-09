@@ -1,35 +1,15 @@
 <template>
   <v-container>
-    <Form v-slot="{ errors, submitForm }" @submit="submitForm(onSubmit)">
-      <Field
-        name="name"
-        rules="required"
-        v-slot="{ field, errors }"
-      >
-        <v-text-field
-          v-bind="field"
-          label="Name"
-          :error-messages="errors"
-        ></v-text-field>
+    <Form @submit="onSubmit">
+      <Field name="name" rules="required" v-slot="{ field, errors }">
+        <v-text-field v-bind="field" label="Name" :error-messages="errors"></v-text-field>
       </Field>
 
-      <Field
-        name="email"
-        rules="required|email"
-        v-slot="{ field, errors }"
-      >
-        <v-text-field
-          v-bind="field"
-          label="Email"
-          :error-messages="errors"
-        ></v-text-field>
+      <Field name="email" rules="required|email" v-slot="{ field, errors }">
+        <v-text-field v-bind="field" label="Email" :error-messages="errors"></v-text-field>
       </Field>
 
-      <Field
-        name="password"
-        rules="required|min:6"
-        v-slot="{ field, errors }"
-      >
+      <Field name="password" rules="required|min:6" v-slot="{ field, errors }">
         <v-text-field
           v-bind="field"
           label="Password"
@@ -44,14 +24,18 @@
 </template>
 
 <script setup>
+import { defineRule, configure } from 'vee-validate';
+import { required, email, min } from '@vee-validate/rules';
 import { Form, Field } from 'vee-validate';
-import * as yup from 'yup';
 
-// 定义验证模式
-const schema = yup.object({
-  name: yup.string().required('Name is required'),
-  email: yup.string().email('Invalid email').required('Email is required'),
-  password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
+// 定义验证规则
+defineRule('required', required);
+defineRule('email', email);
+defineRule('min', min);
+
+// 配置验证模式为 eager
+configure({
+  validateOnInput: true, // 开启 eager 模式
 });
 
 const onSubmit = (values) => {
