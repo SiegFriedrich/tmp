@@ -1,36 +1,50 @@
 <template>
   <v-container>
-    <v-form @submit.prevent="onSubmit">
-      <v-text-field
-        v-model="form.name"
-        label="Name"
-        :error-messages="errors.value?.name"
-        @input="validateField('name')"
-      ></v-text-field>
+    <Form @submit="onSubmit">
+      <Field
+        name="name"
+        rules="required"
+        v-slot="{ field, errors }"
+      >
+        <v-text-field
+          v-bind="field"
+          label="Name"
+          :error-messages="errors"
+        ></v-text-field>
+      </Field>
 
-      <v-text-field
-        v-model="form.email"
-        label="Email"
-        :error-messages="errors.value?.email"
-        @input="validateField('email')"
-      ></v-text-field>
+      <Field
+        name="email"
+        rules="required|email"
+        v-slot="{ field, errors }"
+      >
+        <v-text-field
+          v-bind="field"
+          label="Email"
+          :error-messages="errors"
+        ></v-text-field>
+      </Field>
 
-      <v-text-field
-        v-model="form.password"
-        label="Password"
-        type="password"
-        :error-messages="errors.value?.password"
-        @input="validateField('password')"
-      ></v-text-field>
+      <Field
+        name="password"
+        rules="required|min:6"
+        v-slot="{ field, errors }"
+      >
+        <v-text-field
+          v-bind="field"
+          label="Password"
+          type="password"
+          :error-messages="errors"
+        ></v-text-field>
+      </Field>
 
       <v-btn type="submit">Submit</v-btn>
-    </v-form>
+    </Form>
   </v-container>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useForm, configure } from 'vee-validate';
+import { useForm, Field, Form } from 'vee-validate';
 import * as yup from 'yup';
 
 const schema = yup.object({
@@ -39,36 +53,14 @@ const schema = yup.object({
   password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
 });
 
-configure({
-  generateMessage: ctx => {
-    const messages = {
-      required: `The field ${ctx.field} is required.`,
-      email: `The field ${ctx.field} must be a valid email.`,
-      min: `The field ${ctx.field} is too short.`,
-    };
-
-    const message = messages[ctx.rule.name]
-      ? messages[ctx.rule.name]
-      : `The field ${ctx.field} is invalid.`;
-
-    return message;
-  },
+useForm({
+  validationSchema: schema,
   validateOnInput: true, // eager模式
 });
 
-const form = ref({
-  name: '',
-  email: '',
-  password: '',
-});
-
-const { handleSubmit, errors, validateField } = useForm({
-  validationSchema: schema,
-});
-
-const onSubmit = handleSubmit(values => {
+const onSubmit = (values) => {
   alert(JSON.stringify(values));
-});
+};
 </script>
 
 <style scoped>
