@@ -77,3 +77,67 @@ const onSubmit = handleSubmit((values) => {
 <style scoped>
 /* 这里可以添加一些样式 */
 </style>
+
+
+
+
+<template>
+  <v-container>
+    <v-form @submit.prevent="onSubmit">
+      <v-text-field
+        v-model="form.textField"
+        label="Input Text"
+        :error-messages="errors.textField"
+        @input="validateField('textField')"
+      ></v-text-field>
+
+      <v-btn type="submit">Submit</v-btn>
+    </v-form>
+  </v-container>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+import { useForm, defineRule, configure } from 'vee-validate';
+import * as yup from 'yup';
+
+// 定义验证规则
+const schema = yup.object({
+  textField: yup
+    .string()
+    .min(3, '请输入3个以上文字')
+    .matches(/^[a-zA-Z]+$/, '请全部输入英文字母')
+    .matches(/^[a-z]+$/, '请全部输入小写')
+    .required('此字段是必填的')
+});
+
+configure({
+  generateMessage: ctx => {
+    const messages = {
+      required: `The field ${ctx.field} is required.`,
+      min: `The field ${ctx.field} must be at least ${ctx.rule.params[0]} characters.`,
+      matches: `The field ${ctx.field} must match the pattern.`,
+    };
+
+    return messages[ctx.rule.name] || `The field ${ctx.field} is invalid.`;
+  },
+  validateOnInput: true, // 启用输入时验证
+});
+
+const { handleSubmit, errors, validateField } = useForm({
+  validationSchema: schema,
+});
+
+const form = ref({
+  textField: ''
+});
+
+const onSubmit = handleSubmit((values) => {
+  alert(JSON.stringify(values));
+});
+</script>
+
+<style scoped>
+/* 这里可以添加一些样式 */
+</style>
+
