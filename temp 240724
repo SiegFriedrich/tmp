@@ -1,0 +1,79 @@
+import * as yup from 'yup';
+import { ref, Ref } from 'vue';
+
+interface ValidationError {
+  path: string | number;
+  message: string;
+}
+
+export class FormValidator {
+  private schema: yup.ObjectSchema;
+  private errorMsgs: { [key: string]: any };
+  private errors: Ref<{ [key: string]: string }>;
+
+  constructor(
+    schema: yup.ObjectSchema,
+    errorMsgs: { [key: string]: any },
+    errors: Ref<{ [key: string]: string }>
+  ) {
+    this.schema = schema;
+    this.errorMsgs = errorMsgs;
+    this.errors = errors;
+  }
+
+  async validateForm(form: { [key: string]: any }): Promise<void> {
+    try {
+      await this.schema.validate(form, { abortEarly: false });
+      this.resetErrors();
+    } catch (err) {
+      this.handleValidationErrors(err);
+    }
+  }
+
+  private resetErrors() {
+    for (let key in this.errors.value) {
+      this.errors.value[key] = '';
+      this.errorMsgs[key] = '';
+    }
+  }
+
+  private handleValidationErrors(err: any) {
+    this.errors.value = err.inner.reduce(
+      (acc: { [key: string]: any }, error: ValidationError) => {
+        if (this.errorMsgs[error.path] !== '' && !this.errorMsgs[error.path].includes(error.message)) {
+          this.errorMsgs[error.path] += `\n$$` + error.message;
+        } else if (this.errorMsgs[error.path] === '') {
+          this.errorMsgs[error.path] += `$$` + error.message;
+        }
+        acc[error.path] = this.errorMsgs[error.path];
+        return acc;
+      },
+      {}
+    );
+  }
+}
+
+// 使用示例
+const customSchema = yup.object({
+  numbercard: yup.string().min(3),
+  age: yup.string().min(2),
+});
+
+let errorMsgs: { [x: string]: any } = {
+  numbercard: '',
+  age: '',
+};
+
+const errors = ref({
+  numbercard: '',
+  age: '',
+});
+
+const formValidator = new FormValidator(customSchema, errorMsgs, errors);
+
+const form = {
+  numbercard: '12',
+  age: '1',
+};
+
+formValidator.validateForm(form);
