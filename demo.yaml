@@ -1,0 +1,49 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'windows-latest'  # 也可以使用 'ubuntu-latest'
+
+steps:
+# 1. 设置 Node.js 环境
+- task: NodeTool@0
+  inputs:
+    versionSpec: '16.x'  # 使用的 Node.js 版本
+  displayName: 'Install Node.js'
+
+# 2. 缓存 node_modules 目录
+- task: Cache@2
+  inputs:
+    key: 'npm | "$(Agent.OS)" | package-lock.json'  # 基于 package-lock.json 的缓存键
+    path: 'node_modules'  # 缓存 node_modules 文件夹
+    cacheHitVar: 'CACHE_RESTORED'  # 设置一个变量来指示是否命中缓存
+  displayName: 'Cache node_modules'
+
+# 3. 安装依赖（如果缓存未命中，则执行 npm install）
+- script: |
+    if not defined CACHE_RESTORED (
+      npm install
+    )
+  displayName: 'Install dependencies if not cached'
+
+# 4. 构建项目
+- script: |
+    npm run build
+  displayName: 'Build Vue.js application'
+
+# 5. 发布构建工件
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'dist'  # Vue 项目生成的构建文件夹
+    ArtifactName: 'vue-app'
+    publishLocation: 'Container'
+  displayName: 'Publish build artifacts'
+
+# 6. 部署到 Windows Server（假设你使用自托管代理）
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      Copy-Item -Path "$(System.ArtifactsDirectory)\vue-app\*" -Destination "C:\path\to\your\project" -Recurse
+      Restart-Service -Name 'W3SVC'
+  displayName: 'Deploy to Windows Server'
